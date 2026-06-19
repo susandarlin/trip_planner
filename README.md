@@ -1,6 +1,6 @@
 # Trip Planner
 
-A trip planning app that uses the **OpenStreetMap MCP server**, a **trip-planner skill**, and three **agents** to generate live, data-driven itineraries from real map data.
+A trip planning app that uses the **OpenStreetMap MCP server**, a **trip-planner skill**, and three **agents** to generate live, data-driven trip plans from real map data.
 
 ## Architecture
 
@@ -60,7 +60,7 @@ trip_planner/
 
 4. Enter a destination, number of days, budget, and travel style.
 
-5. Click **Generate itinerary** — the backend calls the OSM MCP server, runs the skill pipeline, and returns a live itinerary with real places and route times.
+5. Click **Generate trip plan** — the backend calls the OSM MCP server, runs the skill pipeline, and returns a live trip plan with real places and route times.
 
 ## MCP tools used at runtime
 
@@ -94,7 +94,7 @@ trip_planner/
 }
 ```
 
-**Response:** Full itinerary with geocoded location, budget breakdown, POI summary, and day-by-day schedule with travel times.
+**Response:** Full trip plan with geocoded location, budget breakdown, POI summary, and day-by-day schedule with travel times.
 
 ### `GET /api/health`
 
@@ -111,4 +111,4 @@ Returns `{"status":"ok","mcpReady":true|false}`.
 
 ## Fallback
 
-If the MCP server is unavailable or an OSM call fails, the backend returns a fallback itinerary using curated sample data — the user always gets a plan.
+If the MCP server is unavailable or an OSM call fails, the backend returns a fallback trip plan using curated sample data — the user always gets a plan.
