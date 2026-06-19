@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Trip Planner</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <div class="max-w-6xl mx-auto px-4 py-10">
+    <header class="mb-10 text-center">
+      <p class="text-teal-300 uppercase tracking-[0.4em] mb-3">Trip Planner</p>
+      <h1 class="text-4xl sm:text-5xl font-semibold">Create a simple itinerary in seconds</h1>
+      <p class="mt-4 text-slate-400 max-w-2xl mx-auto">Enter your destination, trip length, budget, and style. The planner generates a daily travel plan with attractions, dining, and travel guidance.</p>
+    </header>
+
+    <main class="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+      <section class="space-y-6">
+        <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-lg shadow-slate-900/40">
+          <h2 class="text-2xl font-semibold mb-4">Trip details</h2>
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="text-slate-300">Destination</span>
+              <input id="destination" type="text" placeholder="Paris, Tokyo, Bali" class="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 focus:border-teal-400 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </label>
+            <label class="block">
+              <span class="text-slate-300">Trip length (days)</span>
+              <input id="days" type="number" min="1" value="3" class="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 focus:border-teal-400 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </label>
+            <label class="block sm:col-span-2">
+              <span class="text-slate-300">Budget (USD)</span>
+              <input id="budget" type="number" min="0" value="1200" class="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 focus:border-teal-400 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </label>
+
+            <label class="block">
+              <span class="text-slate-300">Travel style</span>
+              <select id="style" class="mt-2 w-full rounded-2xl border border-slate-700 bg-slate-950 px-4 py-3 text-slate-100 focus:border-teal-400 focus:ring-2 focus:ring-teal-500/20 outline-none">
+                <option value="city">City explorer</option>
+                <option value="nature">Nature escape</option>
+                <option value="culture">Culture & history</option>
+                <option value="beach">Beach getaway</option>
+              </select>
+            </label>
+            <label class="flex items-center gap-3 text-slate-300">
+              <input id="includeFood" type="checkbox" checked class="h-5 w-5 rounded border-slate-700 bg-slate-900 text-teal-500 focus:ring-teal-500" />
+              Include food recommendations
+            </label>
+          </div>
+
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button id="generateBtn" class="inline-flex items-center justify-center rounded-2xl bg-teal-500 px-6 py-3 text-slate-950 font-semibold transition hover:bg-teal-400">Generate itinerary</button>
+            <button id="resetBtn" class="inline-flex items-center justify-center rounded-2xl border border-slate-700 bg-slate-900 px-6 py-3 text-slate-200 transition hover:border-teal-400 hover:text-white">Reset form</button>
+          </div>
+          <p id="message" class="mt-4 text-sm text-rose-300"></p>
+        </div>
+
+        <div id="itinerary" class="space-y-6"></div>
+      </section>
+
+      <aside class="space-y-6">
+        <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-lg shadow-slate-900/40">
+          <h2 class="text-2xl font-semibold mb-3">How it works</h2>
+          <ul class="space-y-3 text-slate-300">
+            <li>1. Enter a destination, budget, and trip length.</li>
+            <li>2. Pick the travel style that best matches your vibe.</li>
+            <li>3. Click Generate and get a day-by-day plan.</li>
+            <li>4. Use the travel notes for transport and expenses.</li>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-lg shadow-slate-900/40">
+          <h2 class="text-2xl font-semibold mb-3">Quick tips</h2>
+          <ul class="space-y-3 text-slate-300">
+            <li>Adjust the budget to see daily cost estimates.</li>
+            <li>Try different styles for new itinerary ideas.</li>
+            <li>Open this file in a browser to run it locally.</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
