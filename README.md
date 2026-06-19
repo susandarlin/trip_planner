@@ -1,4 +1,4 @@
-# trip_planner
+# Trip Planner
 
 A trip planning app that uses the **OpenStreetMap MCP server**, a **trip-planner skill**, and three **agents** to generate live, data-driven itineraries from real map data.
 
