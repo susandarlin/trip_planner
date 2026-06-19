@@ -1,0 +1,10 @@
+{
+    "mcpServers": {
+        "osm-mcp-server": {
+            "command": "uvx",
+            "args": [
+                "osm-mcp-server"
+            ]
+        }
+    }
+}

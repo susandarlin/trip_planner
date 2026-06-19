@@ -1,0 +1,4 @@
+Calculates:
+- hotel
+- food
+- transportation
