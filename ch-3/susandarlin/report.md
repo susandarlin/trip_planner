@@ -3,7 +3,7 @@
 github_username: susandarlin
 personal_repo_url: https://github.com/susandarlin/trip_planner
 project_summary: A trip planning app that uses the OpenStreetMap MCP server, a trip-planner skill, and three agents to generate live, data-driven trip plans from real map data.
-slides_url: pechakucha-6x20.md
+slides_url: slides/pitch.md
 
 ## Methodology
 
