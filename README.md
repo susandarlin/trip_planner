@@ -4,7 +4,9 @@
     <strong>Live, data-driven trip plans — powered by OpenStreetMap, Claude skills &amp; AI agents</strong>
   </p>
   <p align="center">
-    <a href="https://trip-planner-mu-taupe.vercel.app">Live URL</a>
+    <a href="https://trip-planner-mu-taupe.vercel.app">
+      <img src="https://img.shields.io/badge/🚀_Live_Demo-trip--planner.vercel.app-000000?style=for-the-badge" alt="Live Demo">
+    </a>
   </p>
 </p>
 
