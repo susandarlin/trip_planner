@@ -5,6 +5,13 @@
             "args": [
                 "osm-mcp-server"
             ]
+        },
+        "chrome-devtools": {
+            "command": "npx",
+            "args": [
+                "chrome-devtools-mcp@latest",
+                "--headless"
+            ]
         }
     }
 }
