@@ -1,6 +1,37 @@
+<p align="center">
+  <h1 align="center">🗺️ Trip Planner</h1>
+  <p align="center">
+    <strong>Live, data-driven trip plans — powered by OpenStreetMap, Claude skills &amp; AI agents</strong>
+  </p>
+  <p align="center">
+    <a href="https://trip-planner-mu-taupe.vercel.app">Live URL</a>
+  </p>
+</p>
+
+---
+
+<p align="center">
+  <img src="screenshots/screenshot-default-view.png" alt="Trip Planner — default form" width="32%">
+</p>
+
+---
+
 # Trip Planner
 
 A trip planning app that uses the **OpenStreetMap MCP server**, a **trip-planner skill**, and three **agents** to generate live, data-driven trip plans from real map data.
+
+## ✨ What is this?
+
+Enter a destination, pick your travel style, and hit **Generate** — the backend calls the **OpenStreetMap MCP server**, runs a **Claude skill** with five planning rules, and pipelines the result through three **AI agents** (destination → budget → schedule). You get a complete day-by-day itinerary with real places, route times, and a budget breakdown — no hardcoded data.
+
+## 🚀 Features
+
+- 🔍 **Real map data** — geocoding, POI discovery, and route directions from OpenStreetMap via MCP
+- 🧠 **AI skill pipeline** — five planning rules (budget, proximity, travel time, food, daily schedule)
+- 🤖 **Three specialized agents** — `destination-agent`, `budget-agent`, `schedule`
+- 🖥️ **Clean web UI** — responsive Tailwind CSS form, instant results
+- 🛡️ **Graceful fallback** — curated sample data when the MCP server is unavailable
+- 📄 **Slides included** — product intro in [`slides/pitch.md`](slides/pitch.md)
 
 ## Architecture
 
