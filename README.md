@@ -13,7 +13,7 @@
 ---
 
 <p align="center">
-  <img src="screenshots/screenshot-default-view.png" alt="Trip Planner — default form" width="32%">
+  <img src="ch-6/screenshots/screenshot-default-view.png" alt="Trip Planner — default form (City explorer)" width="60%">
 </p>
 
 ---
@@ -24,7 +24,7 @@ A trip planning app that uses the **OpenStreetMap MCP server**, a **trip-planner
 
 ## ✨ What is this?
 
-Enter a destination, pick your travel style, and hit **Generate** — the backend calls the **OpenStreetMap MCP server**, runs a **Claude skill** with five planning rules, and pipelines the result through three **AI agents** (destination → budget → schedule). You get a complete day-by-day itinerary with real places, route times, and a budget breakdown — no hardcoded data.
+Enter a destination, pick your travel style (e.g. **City explorer**), and hit **Generate** — the backend calls the **OpenStreetMap MCP server**, runs a **Claude skill** with five planning rules, and pipelines the result through three **AI agents** (destination → budget → schedule). You get a complete day-by-day itinerary with real places, route times, and a budget breakdown — no hardcoded data.
 
 ## 🚀 Features
 
@@ -33,6 +33,7 @@ Enter a destination, pick your travel style, and hit **Generate** — the backen
 - 🤖 **Three specialized agents** — `destination-agent`, `budget-agent`, `schedule`
 - 🖥️ **Clean web UI** — responsive Tailwind CSS form, instant results
 - 🛡️ **Graceful fallback** — curated sample data when the MCP server is unavailable
+- 📸 **Demo screenshot** — City explorer default view in [`ch-6/screenshots/`](ch-6/screenshots/)
 - 📄 **Slides included** — product intro in [`slides/pitch.md`](slides/pitch.md)
 
 ## Architecture
@@ -59,11 +60,15 @@ Browser (app.js)  →  POST /api/generate-itinerary  →  server.js (Express)
 
 ```
 trip_planner/
-├── index.html          # Tailwind CSS UI
-├── app.js              # Frontend logic, calls POST /api/generate-itinerary
-├── server.js           # Express backend, MCP client, skill + agent orchestration
-├── package.json        # Node.js dependencies (express)
-├── .mcp.json           # MCP server config (osm-mcp-server via uvx)
+├── index.html              # Tailwind CSS UI
+├── app.js                  # Frontend logic, calls POST /api/generate-itinerary
+├── server.js               # Express backend, MCP client, skill + agent orchestration
+├── package.json            # Node.js dependencies (express, puppeteer)
+├── .mcp.json               # MCP servers: osm-mcp-server + chrome-devtools
+├── screenshots/            # Legacy screenshot folder
+├── ch-6/screenshots/       # screenshot-default-view.png (README gallery)
+├── feedback/feedback.md    # User feedback notes
+├── slides/pitch.md         # Product intro slides
 ├── .claude/
 │   ├── skills/trip-planner/skill.md    # Skill: budget, proximity, travel, food, schedule
 │   ├── agents/
@@ -71,7 +76,6 @@ trip_planner/
 │   │   ├── budget-agent.md             # Hotel / food / transportation breakdown
 │   │   └── schedule.md                 # Day-by-day timeline with specific times
 │   └── settings.local.json             # Enabled MCP servers
-├── index.html          # Frontend UI (Tailwind CSS)
 └── README.md
 ```
 
@@ -119,11 +123,11 @@ trip_planner/
 **Request body:**
 ```json
 {
-  "destination": "Paris",
-  "days": 3,
-  "budget": 1500,
-  "style": "culture",
-  "includeFood": true
+  "destination": "Tokyo",
+  "days": 2,
+  "budget": 2000,
+  "style": "city",
+  "includeFood": false
 }
 ```
 

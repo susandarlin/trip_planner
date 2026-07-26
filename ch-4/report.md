@@ -16,9 +16,7 @@
 
 - **Resolution used:** 1280×800 desktop
 
-![screenshot 1 — Default trip planner view](screenshots/screenshot-default-view.png)
-![screenshot 2 — Generated daily plan](screenshots/screenshot-daily-plan.png)
-![screenshot 3 — Sample fallback data](screenshots/screenshot-sample-data.png)
+![screenshot 1 — Default trip planner view](../ch-6/screenshots/screenshot-default-view.png)
 
 ## Notes (optional)
 
