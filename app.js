@@ -20,7 +20,60 @@ function formatCurrency(amount) {
 
 function setLoading(isLoading) {
   generateBtn.disabled = isLoading;
-  generateBtn.textContent = isLoading ? 'Generating…' : 'Generate itinerary';
+  generateBtn.textContent = isLoading ? 'Generating…' : 'Generate Trip Plan';
+}
+
+function renderLoading() {
+  itineraryContainer.innerHTML = `
+    <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 shadow-lg shadow-slate-900/40">
+      <div class="flex items-center gap-4 mb-6">
+        <div class="h-10 w-10 rounded-full bg-teal-500/20 flex items-center justify-center">
+          <svg class="animate-spin h-5 w-5 text-teal-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold">Generating your trip plan</h3>
+          <p class="text-slate-400 text-sm">This may take 15–30 seconds</p>
+        </div>
+      </div>
+      <div id="loadingSteps" class="space-y-3">
+        <div class="loading-step flex items-center gap-3 text-teal-400">
+          <span class="step-icon">●</span>
+          <span>Looking up destination on the map…</span>
+        </div>
+        <div class="loading-step flex items-center gap-3 text-slate-500">
+          <span class="step-icon">○</span>
+          <span>Finding nearby attractions and restaurants…</span>
+        </div>
+        <div class="loading-step flex items-center gap-3 text-slate-500">
+          <span class="step-icon">○</span>
+          <span>Calculating budget breakdown…</span>
+        </div>
+        <div class="loading-step flex items-center gap-3 text-slate-500">
+          <span class="step-icon">○</span>
+          <span>Building your daily itinerary…</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function updateLoadingStep(stepIndex) {
+  const steps = document.querySelectorAll('#loadingSteps .loading-step');
+  steps.forEach((step, i) => {
+    if (i < stepIndex) {
+      step.className = 'loading-step flex items-center gap-3 text-slate-400';
+      step.querySelector('.step-icon').textContent = '✓';
+    } else if (i === stepIndex) {
+      step.className = 'loading-step flex items-center gap-3 text-teal-400';
+      step.querySelector('.step-icon').textContent = '●';
+    } else {
+      step.className = 'loading-step flex items-center gap-3 text-slate-500';
+      step.querySelector('.step-icon').textContent = '○';
+    }
+  });
 }
 
 function resetForm() {
@@ -137,14 +190,27 @@ async function handleGenerate(event) {
   }
 
   messageText.textContent = '';
-  itineraryContainer.innerHTML = '';
   setLoading(true);
+  renderLoading();
+
+  // Simulate step progress while waiting for the API
+  let currentStep = 0;
+  const stepInterval = setInterval(() => {
+    if (currentStep < 3) {
+      currentStep++;
+      updateLoadingStep(currentStep);
+    }
+  }, 4000);
 
   try {
     const plan = await generateItinerary(destination, days, budget, style, includeFood);
-    renderItinerary(plan);
+    clearInterval(stepInterval);
+    updateLoadingStep(4);
+    setTimeout(() => renderItinerary(plan), 300);
   } catch (error) {
+    clearInterval(stepInterval);
     messageText.textContent = error.message || 'Could not generate itinerary. Make sure the server is running.';
+    itineraryContainer.innerHTML = '';
   } finally {
     setLoading(false);
   }
