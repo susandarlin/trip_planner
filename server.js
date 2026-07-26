@@ -156,14 +156,14 @@ const styleConfig = {
   },
   nature: {
     label: 'Nature escape',
-    categories: ['tourism', 'leisure', 'natural'],
-    subcategories: ['viewpoint', 'nature_reserve', 'park'],
+    categories: ['tourism', 'leisure', 'natural', 'amenity'],
+    subcategories: ['viewpoint', 'nature_reserve', 'park', 'cafe', 'restaurant'],
     transport: 'scenic drives and nature trails',
   },
   culture: {
     label: 'Culture & history',
     categories: ['tourism', 'amenity', 'historic'],
-    subcategories: ['museum', 'monument', 'theatre', 'ruins', 'artwork'],
+    subcategories: ['museum', 'monument', 'theatre', 'ruins', 'artwork', 'cafe', 'restaurant'],
     transport: 'walking tours and short cab rides',
   },
   beach: {
@@ -235,7 +235,11 @@ async function destinationAgent(mcp, destination, style) {
 
   const config = styleConfig[style] || styleConfig.city;
 
+  // Always search for restaurants separately to ensure we get dining options
+  const restaurantCategories = ['amenity'];
+
   try {
+    // Search for attractions
     const nearbyResult = await mcp.callTool('find_nearby_places', {
       latitude: location.lat,
       longitude: location.lon,
@@ -269,13 +273,62 @@ async function destinationAgent(mcp, destination, style) {
               ),
             };
 
-            if (/restaurant|cafe|food|bar|pub|dining/i.test(subcatName)) {
+            if (/restaurant|cafe|food|bar|pub|dining|fast_food|biergarten/i.test(subcatName)) {
               restaurants.push(item);
             } else {
               attractions.push(item);
             }
           }
         }
+      }
+    }
+
+    // If no restaurants found, try a dedicated restaurant search
+    if (restaurants.length === 0) {
+      console.log('[destination-agent] No restaurants found, trying dedicated search...');
+      try {
+        const restaurantResult = await mcp.callTool('find_nearby_places', {
+          latitude: location.lat,
+          longitude: location.lon,
+          radius: 3000,
+          categories: ['amenity'],
+          limit: 20,
+        });
+
+        console.log('[destination-agent] Restaurant search result:', JSON.stringify(restaurantResult).substring(0, 500));
+
+        if (restaurantResult && restaurantResult.categories) {
+          const amenityCats = restaurantResult.categories.amenity || {};
+          for (const subcatName of Object.keys(amenityCats)) {
+            const places = amenityCats[subcatName] || [];
+            for (const place of places) {
+              const name = place.name || place.tags?.name;
+              if (!name) continue;
+
+              // Check if it's a food-related place
+              if (/restaurant|cafe|food|bar|pub|dining|fast_food|biergarten|ice_cream|coffee/i.test(subcatName)) {
+                const item = {
+                  name,
+                  type: subcatName,
+                  category: 'amenity',
+                  lat: parseFloat(place.latitude || place.lat || 0),
+                  lon: parseFloat(place.longitude || place.lon || 0),
+                  distance: haversineKm(
+                    location.lat,
+                    location.lon,
+                    parseFloat(place.latitude || place.lat || 0),
+                    parseFloat(place.longitude || place.lon || 0)
+                  ),
+                };
+                if (!restaurants.find((r) => r.name === name)) {
+                  restaurants.push(item);
+                }
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.error('[destination-agent] Dedicated restaurant search failed:', e.message);
       }
     }
   } catch (e) {
@@ -428,16 +481,36 @@ async function scheduleAgent(mcp, location, attractions, restaurants, days, styl
     }
 
     // Find nearby restaurants for evening
+    let eveningActivity = 'Dinner & evening leisure';
     let eveningNote = '';
     if (includeFood) {
+      // Get unique restaurants by name, sorted by distance
       const nearbyRestaurants = restaurants
         .filter((r) => r.name)
-        .slice(0, 3)
-        .map((r) => r.name)
-        .join(', ');
-      eveningNote = nearbyRestaurants
-        ? `Dinner options nearby: ${nearbyRestaurants}.`
-        : `Try local restaurants near ${eveningPOI.name}.`;
+        .filter((r, i, arr) => arr.findIndex(x => x.name === r.name) === i)
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 3);
+
+      if (nearbyRestaurants.length > 0) {
+        const topRestaurant = nearbyRestaurants[0];
+        eveningActivity = `Dinner at ${topRestaurant.name}`;
+        const otherOptions = nearbyRestaurants.slice(1).map((r) => r.name).join(', ');
+        eveningNote = `Recommended: ${topRestaurant.name} (${topRestaurant.type || 'local cuisine'}).` +
+          (otherOptions ? ` Also nearby: ${otherOptions}.` : '') +
+          ` All within walking distance of ${eveningPOI.name}.`;
+      } else {
+        // Use fallback food suggestions based on style
+        const styleFoodOptions = {
+          city: ['Bistro dinner', 'Café meal', 'Food court dining', 'Street food'],
+          nature: ['Farmhouse dinner', 'Local tavern', 'Picnic dinner', 'Country restaurant'],
+          culture: ['Heritage restaurant', 'Traditional cuisine', 'Market dinner', 'Local eatery'],
+          beach: ['Seafood restaurant', 'Beach bar dinner', 'Ocean-view dining', 'Coastal café'],
+        };
+        const foodOptions = styleFoodOptions[styleKey] || styleFoodOptions.city;
+        const foodSuggestion = foodOptions[day % foodOptions.length];
+        eveningActivity = foodSuggestion;
+        eveningNote = `Try ${foodSuggestion.toLowerCase()} near ${eveningPOI.name}. Ask your hotel for local recommendations.`;
+      }
     } else {
       eveningNote = 'Food recommendations are disabled for this plan.';
     }
@@ -458,7 +531,7 @@ async function scheduleAgent(mcp, location, attractions, restaurants, days, styl
       },
       evening: {
         time: '6:00 PM onward',
-        activity: 'Dinner & evening leisure',
+        activity: eveningActivity,
         detail: eveningNote,
       },
     });
@@ -482,6 +555,8 @@ async function tripPlannerSkill(mcp, params) {
   console.log('[skill] Running destination agent...');
   const destResult = await destinationAgent(mcp, destination, style);
   const { location, attractions, restaurants } = destResult;
+
+  console.log(`[skill] Found ${attractions.length} attractions and ${restaurants.length} restaurants`);
 
   // 2. Group nearby locations (clustering)
   // Sort attractions by distance so each day covers a tight cluster
@@ -601,8 +676,8 @@ app.post('/api/generate-itinerary', async (req, res) => {
         },
         evening: {
           time: '6:00 PM onward',
-          activity: 'Dinner & leisure',
-          detail: eveningFood ? `Try ${eveningFood} for dinner.` : 'Food recommendations are disabled.',
+          activity: eveningFood ? eveningFood : 'Dinner & evening leisure',
+          detail: eveningFood ? `Try ${eveningFood.toLowerCase()} for dinner. Ask your hotel for local recommendations.` : 'Food recommendations are disabled.',
         },
       });
     }

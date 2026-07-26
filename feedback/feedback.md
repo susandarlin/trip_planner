@@ -32,7 +32,8 @@
 
 ## Top 3 things to fix
 
+- [x] ~~Add a progress indicator or step-by-step loading messages so users know the app is working~~ ✓ Fixed
+- [x] ~~Replace generic "Dinner & evening leisure" with real restaurant recommendations from the POI data~~ ✓ Fixed
+- [x] ~~Fix evening section to always show restaurant names instead of "Dinner & local dining"~~ ✓ Fixed
 - [ ] Add a date picker (departure/return) and show actual dates in the itinerary instead of "Day 1, Day 2"
-- [ ] Replace generic "Dinner & evening leisure" with real restaurant recommendations from the POI data
-- [ ] Add a progress indicator or step-by-step loading messages so users know the app is working
 
